@@ -11,12 +11,12 @@ import parking from '../models/parking';
 import Pricing from '../Components/Pricing';
 
 const Home = () => {
-  const parkingData = parking;
+  // const parkingData = parking;
 
-  useEffect(()=>{
-    console.log(parkingData)
+  // useEffect(()=>{
+  //   console.log(parkingData)
 
-  },[])
+  // },[])
   
 
   const { aboutRef } =  useOutletContext(); // get ref from parent

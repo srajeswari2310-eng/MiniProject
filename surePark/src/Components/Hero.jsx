@@ -33,7 +33,7 @@ const Hero = () => {
         <div className="mt-8 flex justify-center gap-4">
           <a
             className="bg-orange-500 text-white px-20 py-3 rounded-4xl font-semibold shadow hover:scale-105 transform transition"
-            href="home/reservation"
+            href="home/parking"
           >
             Get Started
           </a>

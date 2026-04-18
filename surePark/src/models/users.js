@@ -8,7 +8,12 @@ const users=[
         role:"user",
         vehicles:[
             {
+                id:1,
                 no:"TN/07/AB/1234"
+            },
+            {
+                id:1,
+                no:"TN/07/AB/1236"
             }
         ],
         favoriteSlot:[
@@ -25,8 +30,8 @@ const users=[
 
             },
             {
-                locationId: 1,
-                floorId: 3,
+                locationId: 2,
+                floorId: 2,
                 slotId: 1               
 
             }
@@ -45,7 +50,8 @@ const users=[
             {
                 no:"TN/07/AB/1234"
             }
-        ]
+        ],
+        favoriteSlot:[]
     },
     {
         Id:3,
@@ -58,7 +64,8 @@ const users=[
             {
                 no:"TN/07/AB/1234"
             }
-        ]
+        ],
+          favoriteSlot:[]
     },
      {
         Id:4,
@@ -67,7 +74,8 @@ const users=[
         password: "admin123",
         isLoggedIn: false,
         role:"admin",
-        vehicles:null
+        vehicles:null,
+          favoriteSlot:[]
     }
 ];
 

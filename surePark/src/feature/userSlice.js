@@ -46,7 +46,7 @@ const userSlice = createSlice({
                 state.error = "User already exists";
                 state.success = false;
             } else {
-                const newUser = { name, email, password, isLoggedIn: false };
+                const newUser = { name, email, password, isLoggedIn: false,vehicles:[], favoriteSlot:[] };
                 state.users.push(newUser);
                 state.error = null;
                 state.success = true;
