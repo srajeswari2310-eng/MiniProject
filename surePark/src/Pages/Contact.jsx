@@ -36,7 +36,8 @@ const Contact = () => {
                                 className="border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-orange-400"
                             ></textarea>
                             <button
-                                type="submit"
+                                type="button"
+                                onClick={()=>{alert("Message Sent")}}
                                 className="bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 transition"
                             >
                                 Submit

@@ -8,6 +8,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import logo from '../assets/logo.png'
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../feature/userSlice';
+import { reset } from '../feature/parkingSlice';
 
 
 
@@ -20,8 +21,12 @@ const NavBar = ({ onScrollToAbout, onScrollToHow, onScrollToPrice }) => {
   const location = useLocation();
 
   const handleLogout = () => {
+    
+    
     dispatch(logout());
-    navigate('/');
+    dispatch(reset({currentUser : null}));
+  //  navigate('/login');
+  window.location.href = "/login";
     setIsMenuOpen(false); // close menu after logout
   };
 
@@ -40,21 +45,33 @@ const NavBar = ({ onScrollToAbout, onScrollToHow, onScrollToPrice }) => {
 
     // Only show these when on Home
     ...(isHomePage
-      ? [
+      ? [ 
         { name: "About", action: onScrollToAbout, type: "button" },
+        ...( currentUser.role != "admin" ? [
         { name: "How It Works", action: onScrollToHow, type: "button" },
         { name: "Our Plan", action: onScrollToPrice, type: "button" },
+        ] : []
+        )
       ]
       : []),  
 
     ...(currentUser.role == "admin"
 
-      ? [{ name: 'Manag Lot', to: 'manageSlot', type: 'link' },]
+      ? [{ name: 'Manage Lot', to: 'manageSlot', type: 'link' },]
       :
       [
          { name: 'ContactUs', to: 'contact', type: 'link' },
-        { name: 'Find Lot', to: 'parking', type: 'link' },]
-    )
+
+         ...( currentUser.vehicles.length >0 ?
+        [ { name: 'Find Lot', to: 'parking', type: 'link' },] : [ { name: 'Add Vehicle', to: 'vehicles', type: 'link' }]
+         )
+        ]
+    ),
+
+    ...(isMenuOpen && currentUser.role == "user"  ?
+       [{ name: 'Profile', to: 'profile', type: 'link' },
+        { name: 'Vehicles', to: 'vehicles', type: 'link' },]
+       :[])
   ];
 
   return (
@@ -67,7 +84,7 @@ const NavBar = ({ onScrollToAbout, onScrollToHow, onScrollToPrice }) => {
 
         <div className='flex' >
           {/* Desktop Links */}
-          <div className="hidden md:flex lg:me-4 space-x-4">
+          <div className="hidden md:flex lg:me-10 space-x-4">
             {navLinks.map((link, idx) =>
               link.type === 'link' ? (
                 <Link
@@ -92,7 +109,7 @@ const NavBar = ({ onScrollToAbout, onScrollToHow, onScrollToPrice }) => {
 
           {/* User Info with Dropdown */}
           {currentUser?.name && (
-            <div className="hidden md:flex items-center gap-2 mr-6 relative group">
+            <div className="hidden md:flex items-center gap-2 mr-4 relative group">
               <FaUserCircle className="text-orange-600 text-2xl cursor-pointer" />
               <span className="font-semibold cursor-pointer">{currentUser.name}</span>
 
@@ -138,7 +155,7 @@ const NavBar = ({ onScrollToAbout, onScrollToHow, onScrollToPrice }) => {
           <div className="md:hidden">
             <button
               onClick={toggleMenu}
-              className="text-gray-700 hover:text-black focus:outline-none me-3"
+              className="text-gray-700 hover:text-black focus:outline-none me-5"
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -152,7 +169,7 @@ const NavBar = ({ onScrollToAbout, onScrollToHow, onScrollToPrice }) => {
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div
-          className={`md:hidden mt-4 flex flex-col gap-2 
+          className={`md:hidden mt-4 flex flex-col gap-2 w-[80%]
       transition-all duration-300 ease-in-out 
       transform ${isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"}`}
         >

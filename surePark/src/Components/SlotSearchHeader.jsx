@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { setError, setIntialValues, setSelectedEndDate, setSelectedEndTime, setSelectedLocation, setSelectedParking, setSelectedPlan, setSelectedStartDate, setSelectedStartTime, setSelectedVehicleNo } from '../feature/parkingSlice';
+import { reserveSlot, reset, setError, setIntialValues, setSelectedEndDate, setSelectedEndTime, setSelectedLocation, setSelectedParking, setSelectedPlan, setSelectedStartDate, setSelectedStartTime, setSelectedVehicleNo } from '../feature/parkingSlice';
+import { insertReservation } from '../feature/userSlice';
+import { useNavigate } from 'react-router-dom';
 
-const SlotSearchHeader = () => {
+const SlotSearchHeader = ({onReserve}) => {
 
    const {currentUser} = useSelector((state) => state.user); // Redux selector
    const {parkings, selectedLocation, selectedVehicleNo, selectedPlan,
-    selectedStartDate,selectedEndDate,selectedStartTime,selectedEndTime,parkingError
+    selectedStartDate,selectedEndDate,selectedStartTime,selectedEndTime,parkingError, isSuccess, reservationDetails, isPayment
    } = useSelector((state) => state.parking); // Redux selector
 
 
@@ -18,14 +20,18 @@ const SlotSearchHeader = () => {
   
 
    const dispatch = useDispatch();
+   
 
-  // const handleConfirm = () => {
-  //   alert(`Reservation Confirmed:\nLocation: \nVehicle: ${vehicleType}\nPlan: ${plan}\nDuration: ${plan === "shortTerm" ? `${startTime} - ${endTime}` : `${startDate} to ${endDate}`}`);
-  // };
+  const handleConfirm = (e) => {
+    e.preventDefault();
+    
+    dispatch(reserveSlot({ currentUser }));    
+  };
 
 // set selecting location
   const handleLocation = (e) => {
    e.preventDefault(); 
+   console.log(e.target.value);
     dispatch(setSelectedLocation({location: e.target.value}));
   }
 
@@ -69,20 +75,29 @@ const SlotSearchHeader = () => {
 
   const handleCancel= (e) =>{
      e.preventDefault(); 
-    dispatch(setIntialValues({ currentUser }));
+    dispatch(reset({ currentUser }));
   }
 
 useEffect(() => {
-  if (currentUser) {
-    dispatch(setIntialValues({ currentUser }));
+  if (currentUser) {   
+    
+     console.log(reservationDetails);
+    dispatch(setIntialValues({ currentUser }));    
   }
-}, [currentUser, dispatch]);
+//}, [currentUser,isPayment, dispatch]);
+}, []);
 
   useEffect(()=>{
     if(selectedLocation){
     dispatch(setSelectedParking({location: selectedLocation}));// use to set parking details for particular location
     }
-  },[selectedLocation, selectedVehicleNo])
+    if(isSuccess == true){
+      console.log(reservationDetails.plan)
+      dispatch(insertReservation({ details : reservationDetails}));
+      
+     onReserve();
+    }
+  },[selectedLocation, selectedVehicleNo, parkingError, isSuccess, reservationDetails])
 
   
 
@@ -91,16 +106,13 @@ useEffect(() => {
   
   return (
    
-      <div className="w-full md:w-[80%] bg-orange-100 rounded-2xl mx-auto px-4 py-2 mt-4 flex flex-col items-center">
-        {/* Heading
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-3xl md:text-5xl font-bold bg-gradient-to-r p-2 from-teal-500 via-orange-500 to-pink-500 bg-clip-text text-transparent">
+      <div className="w-full md:w-[80%] bg-orange-100 rounded-2xl mx-auto px-4 py-2 mt-4 mb-3 flex flex-col items-center">
+        {/* Heading */}
+       
+          <h2 className="text-xl md:text-2xl font-bold bg-gradient-to-r p-2 from-teal-500 via-orange-500 to-pink-500 bg-clip-text text-transparent">
             Vehicle Reservation
           </h2>
-          <p className="mt-5 text-2xl text-gray-600">
-            Select your vehicle, plan, and reservation time.
-          </p>
-        </div> */}
+         
 
         <div className="flex flex-col lg:flex-row items-center gap-10 items-center justify-center">
         {/* Location Selection */}
@@ -207,7 +219,7 @@ useEffect(() => {
 
          <div className="flex flex-col lg:flex-row mt-4 gap-4">
           <button
-            // onClick={handleConfirm}
+            onClick={handleConfirm}
             className="bg-orange-500 text-white text-xl px-6 py-2 rounded font-semibold shadow hover:scale-105 transform transition"
           >
             Confirm Reservation

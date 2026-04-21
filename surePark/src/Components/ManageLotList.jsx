@@ -8,7 +8,7 @@ const ManageLotList = () => {
 
   const dispatch = useDispatch();
 
-  const { parkings } = useSelector((state) => state.parking);
+  const { selectedParking } = useSelector((state) => state.parking);
   const { currentUser } = useSelector((state) => state.user)
 
   // Track which tab is active: floors or favorites
@@ -17,7 +17,7 @@ const ManageLotList = () => {
   // Track which floor tab is active
   const [activeFloor, setActiveFloor] = useState(0);
 
-  if (!parkings || parkings.length === 0) {
+  if (!selectedParking) {
     return (
       <div className="flex items-center justify-center h-screen">
         <p className="text-gray-500 text-lg">No parking data available</p>
@@ -25,18 +25,18 @@ const ManageLotList = () => {
     );
   }
 
-  const floors = parkings[0].floors; // assuming one location for now
+  const floors = selectedParking.floors; // assuming one location for now
 
   const handelAdminSelectSlot= (data) => {
     console.log(data)
-    if(data.slot.occupied){
+    if(data.slot.occupied || data.slot.reserved){
     dispatch(removeReservation({floorId: data.floorid, slotId: data.slot.id}))
     }
   }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center py-10">
-      <h1 className="text-2xl font-bold mb-6">{parkings[0].location} Slots</h1>
+      <h1 className="text-2xl font-bold mb-6">{selectedParking.location} Slots</h1>
 
 
 

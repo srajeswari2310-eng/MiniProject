@@ -1,7 +1,10 @@
 import React from 'react'
 import hero_vid from '../assets/hero_vedio.mp4'
+import { useDispatch, useSelector } from 'react-redux';
 
 const Hero = () => {
+  // Get user info from Redux store
+  const { currentUser } =  useSelector((state) => state.user);
   return (
    
      <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -30,6 +33,8 @@ const Hero = () => {
           Easy booking, instant confirmation and 24/7 access
         </p>
 
+        { currentUser.role =="user" && (
+
         <div className="mt-8 flex justify-center gap-4">
           <a
             className="bg-orange-500 text-white px-20 py-3 rounded-4xl font-semibold shadow hover:scale-105 transform transition"
@@ -39,6 +44,8 @@ const Hero = () => {
           </a>
          
         </div>
+        )
+}
       </div>
     </section>
   )

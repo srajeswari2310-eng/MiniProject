@@ -56,8 +56,15 @@ const ManageVehicle = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-content py-10">
-        <h1 className="text-2xl font-bold mb-6">Vehicle Management</h1>
+       <div className="min-h-screen bg-orange-100 flex flex-col items-center px-4 py-10 ">
+      {/* Heading */}
+      <div className="text-start max-w-3xl mx-auto p-10">
+        <h2 className="text-2xl md:text-4xl font-bold bg-gradient-to-r p-2 from-teal-500 via-orange-500 to-pink-500 bg-clip-text text-transparent">
+          Manage Vehicles
+        </h2>
+      </div>
+
+      <div className="bg-white shadow-xl rounded-2xl p-6 ">  
 
         <Formik
           initialValues={{ no: "" }}
@@ -132,6 +139,8 @@ const ManageVehicle = () => {
             </Form>
           )}
         </Formik>
+
+        </div>
 
 
 

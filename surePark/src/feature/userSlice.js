@@ -4,8 +4,8 @@ import users from "../models/users";
 const initialState = {
     users: users,
     success: false,
-    isLoggedIn: true,
-    currentUser: users[0],
+    isLoggedIn: false,
+    currentUser: null,
     error: null,
     //for forgot pwd
     generatedOtp: "",
@@ -46,7 +46,7 @@ const userSlice = createSlice({
                 state.error = "User already exists";
                 state.success = false;
             } else {
-                const newUser = { name, email, password, isLoggedIn: false,vehicles:[], favoriteSlot:[] };
+                const newUser = { name, email, password, isLoggedIn: false,vehicles:[], favoriteSlot:[], reservedSlot:[], role:"user"};
                 state.users.push(newUser);
                 state.error = null;
                 state.success = true;
@@ -55,7 +55,7 @@ const userSlice = createSlice({
         changePassword: (state, action) => {
             
             const {password} = action.payload;
-              console.log(password);
+        console.log(password);
            const exists = state.users.find((u) => u.email === state.userChange.email);
            if(exists) {
             state.users.find((u) => u.email === state.userChange.email).password = password;
@@ -168,8 +168,8 @@ const userSlice = createSlice({
                 else{
                     const fav = {
                         locationId: locationId,
-                floorId: floorId,
-                slotId: slotId
+                       floorId: floorId,
+                       slotId: slotId
                         
                     }
                     state.users.find((u) => u.email === state.currentUser.email).favoriteSlot.push(fav);
@@ -177,13 +177,29 @@ const userSlice = createSlice({
                 }
             }
             
+        },
+        insertReservation:(state,action) =>{
+            const { details } =action.payload
+
+              const exists = state.users.find((u) => u.email === state.currentUser.email);
+              console.log(exists)
+            if(exists) {
+                state.users.find((u) => u.email === state.currentUser.email).reservedSlot.push(details);
+                state.currentUser?.reservedSlot.push({
+                    details
+                })              
+            }
+
+        },
+        resetUserError:(state,action) => {
+            state.error = null;
         }
 
     }
 });
 
 export const { register, login, changePassword, generateOtp, confirmOtp, setForgotState, logout, 
-    addUserVehicles, editUserVehicles, deleteUserVehicles, handleFav
+    addUserVehicles, editUserVehicles, deleteUserVehicles, handleFav,insertReservation,resetUserError
  } = userSlice.actions;
 export default userSlice.reducer;
 

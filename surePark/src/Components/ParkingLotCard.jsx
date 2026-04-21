@@ -79,7 +79,7 @@ setIsSelected(isSlot);
      <div
       className={`group w-40 h-28 rounded-lg shadow-md relative 
         ${
-      slotDetails.occupied || isResverd
+      slotDetails.occupied || ( currentUser.role=="user" ? isResverd : slotDetails.reserved)
         ? "bg-red-100 border-red-500"
         : isSelected
         ? "bg-yellow-100 border-yellow-500"
@@ -91,9 +91,9 @@ setIsSelected(isSlot);
       { floorName && ( <h3 className="text-sm font-semibold mb-2">{floorName}</h3>) }
       <h3 className="text-sm font-semibold mb-2">{slotDetails.slotName}</h3>
 
-      {/* <h3 className="text-sm font-semibold mb-2">{slotDetails.slotName}{startDate}</h3> */}
 
-      {slotDetails.occupied ? (
+     { currentUser.role == "user" ?
+      (slotDetails.occupied ? (
         <>
           <FaCarSide className="w-8 h-8 text-red-500 absolute bottom-2" />
           {/* Hover tooltip */}
@@ -104,11 +104,27 @@ setIsSelected(isSlot);
             {maskedVehicleNo} 
           </div>
         </>
-      ) : (
-        <span className="text-green-600 text-sm">Available</span>
-      )}
+      ) : ( isResverd ? <span className="text-green-600 text-sm">Reserved</span>
+        :<span className="text-green-600 text-sm">Available</span>
+      )) : (slotDetails.occupied ? (
+        <>
+          <FaCarSide className="w-8 h-8 text-red-500 absolute bottom-2" />
+          {/* Hover tooltip */}
+          <div
+            className="absolute -top-8 bg-black text-white text-xs px-2 py-1 rounded 
+                       opacity-0 group-hover:opacity-100 transition duration-300"
+          >
+            {maskedVehicleNo} 
+          </div>
+        </>
+      ) : ( slotDetails.reserved ? <span className="text-green-600 text-sm">Reserved</span>
+        :<span className="text-green-600 text-sm">Available</span>
+      ))
+    }
 
       {/* Favorite Button */}
+
+      { currentUser.role == "user" &&
       <button
         className={`absolute top-2 right-2 transition 
          ${isFav == true ? "text-red-500" : "text-gray-400"}`}
@@ -122,6 +138,7 @@ setIsSelected(isSlot);
       >
         <FaHeart />
       </button>
+      }
     </div>
   )
 }

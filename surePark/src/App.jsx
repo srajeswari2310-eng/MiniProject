@@ -16,11 +16,15 @@ import ParkingLot from './Pages/ParkingLot';
 import UserProfile from './Pages/UserProfile';
 import ManageLot from './Pages/ManageLot';
 import ReservationPage from './Pages/ReservationPage';
+import './style.css'
+import PaymentPage from './Pages/PaymentPage';
+import ErrorPage from './Pages/ErrorPage';
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
+    errorElement:<ErrorPage/>,
     children: [
       {
         index: true,
@@ -60,7 +64,7 @@ const router = createBrowserRouter([
       },      
       {
         path:"parking",
-        element:<ParkingLot/>
+        element:<ParkingLot/>,     
       },      
       {
         path:"manageSlot",
@@ -73,7 +77,12 @@ const router = createBrowserRouter([
       {
         path:"reservation",
         element:<ReservationPage/>
+      },
+      {
+        path:"payment",
+        element:<PaymentPage/>
       }
+     
     ],
   },
 ]);

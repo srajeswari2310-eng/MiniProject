@@ -13,7 +13,7 @@ import * as Yup from "yup";
 import { useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from 'react';
-import { login } from '../feature/userSlice';
+import { login, resetUserError } from '../feature/userSlice';
 
 
 const LoginPage = () => {
@@ -29,11 +29,13 @@ const LoginPage = () => {
 
     const handleForgotPassword = (e) => {
         e.preventDefault();
+        dispatch(resetUserError());
         navigate("/forgotPassword"); // navigate programmatically
     }
 
     const handleSingup = (e) => {
         e.preventDefault();
+        dispatch(resetUserError());
         navigate("/singup"); // navigate programmatically
     }
 
@@ -68,6 +70,7 @@ const LoginPage = () => {
     useEffect(()=>{
         if(isLoggedIn == true)
         {
+            dispatch(resetUserError());
             navigate("/home"); // redirect after login
 
         }

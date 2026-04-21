@@ -1,3 +1,5 @@
+import { reserveSlot } from "../feature/parkingSlice";
+
 const users=[
     {
         Id:1,
@@ -37,7 +39,10 @@ const users=[
             }
 
 
-        ]        
+        ],
+        reservedSlot:[
+
+        ] 
     },
     {
         Id:2,
@@ -51,7 +56,8 @@ const users=[
                 no:"TN/07/AB/1234"
             }
         ],
-        favoriteSlot:[]
+        favoriteSlot:[],
+        reservedSlot:[]
     },
     {
         Id:3,
@@ -65,7 +71,8 @@ const users=[
                 no:"TN/07/AB/1234"
             }
         ],
-          favoriteSlot:[]
+          favoriteSlot:[],
+          reserveSlot:[]
     },
      {
         Id:4,
@@ -75,7 +82,9 @@ const users=[
         isLoggedIn: false,
         role:"admin",
         vehicles:null,
-          favoriteSlot:[]
+        favoriteSlot:[],
+        reservedSlot:[]
+
     }
 ];
 

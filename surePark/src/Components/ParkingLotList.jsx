@@ -4,6 +4,8 @@ import ParkingLotCard from "../Components/ParkingLotCard"; // reuse your card co
 import { useState } from 'react';
 import { removeReservation, setSelectedSlot } from '../feature/parkingSlice';
 import { handleFav } from '../feature/userSlice';
+import { Map } from 'leaflet';
+import MapComponent from './MapComponent';
 
 const ParkingLotList = () => {
 
@@ -28,91 +30,67 @@ const ParkingLotList = () => {
   }
 
 
-  const handelSelectSlot= (data) => {
-    
+  const handelSelectSlot = (data) => {
+
     console.log(selectedParking);
-    if(!data.slot.occupied){
-    dispatch(setSelectedSlot({floorId: data.floorid, slotId: data.slot.id}))
+    if (!data.slot.occupied) {
+      dispatch(setSelectedSlot({ floorId: data.floorid, slotId: data.slot.id }))
     }
   }
 
-  const  handleAddFavorite = (data) => {
-    dispatch(handleFav({slotId: data.slotId, floorId: data.floorId, locationId : data.locationId}));
+  const handleAddFavorite = (data) => {
+    console.log(selectedParking);
+    dispatch(handleFav({ slotId: data.slotId, floorId: data.floorId, locationId: data.locationId }));
   }
 
 
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-10">
-      <h1 className="text-2xl font-bold mb-6">{selectedParking.location} Slots</h1>
-
-
-     {/* Tabs */}
-     
-      <div className="flex gap-4 mb-6">
-  {selectedParking.floors.map((floor, index) => (
-    <button
-      key={floor.floorId}
-      onClick={() => {
-        setActiveTab("floor");
-        setActiveFloor(index);
-      }}
-      className={`px-4 py-2 rounded-lg font-semibold transition 
-        ${activeTab === "floor" && activeFloor === index ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"}`}
-    >
-      {floor.name}
-    </button>
-  ))}
-  {currentUser.role === "user" && (
-    <button
-      onClick={() => setActiveTab("favorites")}
-      className={`px-4 py-2 rounded-lg font-semibold transition 
-        ${activeTab === "favorites" ? "bg-purple-600 text-white" : "bg-gray-200 text-gray-700"}`}
-    >
-      Favorites
-    </button>
-  )}
-</div>
+    <div className="flex flex-col md:flex-row min-h-screen w-full">
 
     
 
- {/* Slot Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-        {activeTab === "floor" &&
-    selectedParking.floors[activeFloor].slots.map((slot) => (
-      <ParkingLotCard
-        key={slot.id}
-        floorId={selectedParking.floors[activeFloor].floorId}
-        slotDetails={slot}
-        currentUser={currentUser}
-        userVehicleNo={slot.userVehicleNo}
-        onSelectSlot={handelSelectSlot}
-        locationId={selectedParking.locationId}
-        onAddFavorite={handleAddFavorite}
-        startDate={selectedStartDate}
-      />
-    ))}
+      {/* Right side map */}
+      <div className="md:w-1/2  flex  flex-col w-full items-center">
 
-        {activeTab === "favorites" &&
-          currentUser.favoriteSlot.map((fav, index) =>  {
-            // // Find the correct location
-            // const mall = parkings.find((p) => p.locationId === fav.locationId);
-            // if (!mall) return null;
+        <h1 className="text-2xl font-bold mb-6">{selectedParking.location} Slots</h1>
 
-            if (fav.locationId != selectedParking.locationId) return null;
-            // Find the floor
 
-            const floor = selectedParking.floors.find((f) => f.floorId === fav.floorId);
-            if (!floor) return null;
+        {/* Tabs */}
 
-            // Find the slot
-            const slot = floor.slots.find((s) => s.id === fav.slotId);
-            if (!slot) return null;
+        <div className="flex gap-4 mb-6">
+          {selectedParking.floors.map((floor, index) => (
+            <button
+              key={floor.floorId}
+              onClick={() => {
+                setActiveTab("floor");
+                setActiveFloor(index);
+              }}
+              className={`px-4 py-2 rounded-lg font-semibold transition 
+        ${activeTab === "floor" && activeFloor === index ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"}`}
+            >
+              {floor.name}
+            </button>
+          ))}
+          {currentUser.role === "user" && (
+            <button
+              onClick={() => setActiveTab("favorites")}
+              className={`px-4 py-2 rounded-lg font-semibold transition 
+        ${activeTab === "favorites" ? "bg-purple-600 text-white" : "bg-gray-200 text-gray-700"}`}
+            >
+              Favorites
+            </button>
+          )}
+        </div>
 
-            return (
+
+        {/* Slot Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+          {activeTab === "floor" &&
+            selectedParking.floors[activeFloor].slots.map((slot) => (
               <ParkingLotCard
-                key={`${fav.location}-${fav.floorId}-${fav.slotsId}-${index}`}
-                floorId={floor.floorId}
+                key={slot.id}
+                floorId={selectedParking.floors[activeFloor].floorId}
                 slotDetails={slot}
                 currentUser={currentUser}
                 userVehicleNo={slot.userVehicleNo}
@@ -120,15 +98,57 @@ const ParkingLotList = () => {
                 locationId={selectedParking.locationId}
                 onAddFavorite={handleAddFavorite}
                 startDate={selectedStartDate}
-                floorName={floor.name}
               />
-            );
-          })}
+            ))}
+
+          {activeTab === "favorites" &&
+            currentUser.favoriteSlot.map((fav, index) => {
+              // // Find the correct location
+              // const mall = parkings.find((p) => p.locationId === fav.locationId);
+              // if (!mall) return null;
+
+              if (fav.locationId != selectedParking.locationId) return null;
+              // Find the floor
+
+              const floor = selectedParking.floors.find((f) => f.floorId === fav.floorId);
+              if (!floor) return null;
+
+              // Find the slot
+              const slot = floor.slots.find((s) => s.id === fav.slotId);
+              if (!slot) return null;
+
+              return (
+                <ParkingLotCard
+                  key={`${fav.location}-${fav.floorId}-${fav.slotsId}-${index}`}
+                  floorId={floor.floorId}
+                  slotDetails={slot}
+                  currentUser={currentUser}
+                  userVehicleNo={slot.userVehicleNo}
+                  onSelectSlot={handelSelectSlot}
+                  locationId={selectedParking.locationId}
+                  onAddFavorite={handleAddFavorite}
+                  startDate={selectedStartDate}
+                  floorName={floor.name}
+                />
+              );
+            })}
+        </div>
       </div>
+
+      
+        {/* Left side content */}
+      {
+       selectedParking?.coordinates && (
+        <div className="w-full md:w-1/2 h-[120px] sm:h-[200px] md:h-[300px] lg:h-full">
+       <MapComponent coordinates={selectedParking.coordinates}/>
+      </div>)
+    }
+
+    
 
     </div>
   );
-  
+
 }
 
 export default ParkingLotList
