@@ -81,7 +81,7 @@ const SlotSearchHeader = ({onReserve}) => {
 useEffect(() => {
   if (currentUser) {   
     
-     console.log(reservationDetails);
+     console.log(currentUser);
     dispatch(setIntialValues({ currentUser }));    
   }
 //}, [currentUser,isPayment, dispatch]);
@@ -92,12 +92,11 @@ useEffect(() => {
     dispatch(setSelectedParking({location: selectedLocation}));// use to set parking details for particular location
     }
     if(isSuccess == true){
-      console.log(reservationDetails.plan)
-      dispatch(insertReservation({ details : reservationDetails}));
       
      onReserve();
     }
-  },[selectedLocation, selectedVehicleNo, parkingError, isSuccess, reservationDetails])
+      console.log(currentUser);
+  },[selectedLocation, selectedVehicleNo, parkingError, isSuccess,currentUser])
 
   
 

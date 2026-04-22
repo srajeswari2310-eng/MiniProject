@@ -26,7 +26,12 @@ const ForgotPassword = () => {
   });
 
   const changeSchema = Yup.object({
-    newPwd: Yup.string().min(6, "Password must be at least 6 characters").required("Required"),
+    newPwd: Yup.string().min(6, "Password must be at least 6 characters")
+    .matches(
+      /^(?=.*[!@#$%^&*(),.?":{}|<>])/,
+      "Password must contain at least one special character"
+    ).
+    required("Required"),
     confirmNewPwd: Yup.string()
       .oneOf([Yup.ref("newPwd"), null], "Passwords must match")
       .required("Required"),

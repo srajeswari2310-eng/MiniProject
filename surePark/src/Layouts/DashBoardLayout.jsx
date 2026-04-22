@@ -10,11 +10,12 @@ import { useRef } from 'react';
 
 function DashBoardLayout(){
 
-    const { isLoggedIn } = useSelector((state) => state.user);
+    const { isLoggedIn,currentUser } = useSelector((state) => state.user);
 
      const aboutRef = useRef(null);
      const howRef = useRef(null);
      const priceRef = useRef(null);
+     const role = currentUser?.role;
 
   const scrollToAbout = () => {
     aboutRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -38,7 +39,7 @@ function DashBoardLayout(){
   return (
     <>
       <NavBar onScrollToAbout={scrollToAbout} onScrollToHow={scrollToHow} onScrollToPrice={scrollToPrice}/>
-      <Outlet context={{ aboutRef, howRef, priceRef }}/>
+      <Outlet context={{ aboutRef, howRef, priceRef, role }}/>
       <Footer/>
     </>
   );

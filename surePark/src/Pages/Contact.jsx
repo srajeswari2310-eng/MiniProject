@@ -1,13 +1,16 @@
 import React from 'react'
 import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
+import contact from '../assets/contact-us.jpg'
 
 const Contact = () => {
     return (
         <>
-            <div className="min-h-screen bg-gray-50 flex flex-col items-center px-4 py-10">
+            <div className="min-h-screen bg-gray-50 flex flex-col items-center px-4 py-10 bg-cover bg-center" style={{ backgroundImage: `url(${contact})` }}>
+
+            
 
                 {/* Heading */}
-                <div className="text-start max-w-3xl mx-auto p-10">
+                <div className="text-start max-w-3xl mx-auto p-10 text-white">
                     <h2 className="text-3xl md:text-5xl font-bold">
                         Contact Us
                     </h2>

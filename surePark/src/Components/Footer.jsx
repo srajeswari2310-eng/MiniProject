@@ -1,9 +1,25 @@
 import React from 'react'
 import bollrads from '../assets/bollrads.jpg'
 import logo from '../assets/logo.png'
+import { useNavigate } from 'react-router-dom'
 
 const Footer = () => {
+   const navigate = useNavigate();
+
+   const handelHome= ( e) => {
+      e.preventDefault();
+       navigate("/home");
+   }
+
+   const handelContact= ( e) => {
+      e.preventDefault();
+       navigate("contact");
+   }
+
   return (
+
+   
+
     <>
       <footer className="bg-orange-200 py-6 mt-auto">
       <div className="container mx-auto flex flex-col md:flex-row items-center justify-between px-4">
@@ -14,8 +30,8 @@ const Footer = () => {
 
         {/* Links */}
         <div className="flex gap-6 text-gray-600">
-          <a href="/home" className="hover:text-orange-600">Home</a>
-          <a href="home/contact" className="hover:text-orange-600">Contact</a>
+          <button onClick={handelHome} className="hover:text-orange-600">Home</button>
+          <button onClick={handelContact} className="hover:text-orange-600">Contact</button>
         </div>
       </div>
 

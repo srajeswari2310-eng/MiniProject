@@ -179,16 +179,20 @@ const userSlice = createSlice({
             
         },
         insertReservation:(state,action) =>{
-            const { details } =action.payload
+            const { details, location, floorId, slotId } =action.payload
+
+            console.log(details,location,floorId,slotId)
 
               const exists = state.users.find((u) => u.email === state.currentUser.email);
               console.log(exists)
             if(exists) {
-                state.users.find((u) => u.email === state.currentUser.email).reservedSlot.push(details);
-                state.currentUser?.reservedSlot.push({
-                    details
-                })              
+                state.users.find((u) => u.email === state.currentUser.email).reservedSlot.push({details : details, location: location, floorId: floorId, slotId: slotId});
+                state.currentUser?.reservedSlot.push(
+                    {details : details, location: location, floorId: floorId, slotId: slotId}
+                )              
             }
+
+             console.log(state.currentUser)
 
         },
         resetUserError:(state,action) => {

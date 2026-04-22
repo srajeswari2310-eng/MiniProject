@@ -19,6 +19,7 @@ import ReservationPage from './Pages/ReservationPage';
 import './style.css'
 import PaymentPage from './Pages/PaymentPage';
 import ErrorPage from './Pages/ErrorPage';
+import GetDirection from './Pages/GetDirection';
 
 const router = createBrowserRouter([
   {
@@ -81,6 +82,10 @@ const router = createBrowserRouter([
       {
         path:"payment",
         element:<PaymentPage/>
+      },
+      {
+        path:"direction",
+        element:<GetDirection/>
       }
      
     ],

@@ -1,6 +1,7 @@
 // feature/parkingSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 import parkings from "../models/parking";
+import pricingDetails from "../models/pricingDetail";
 
 // Utility to format date as YYYY-MM-DD
 const formatDate = (date) => date.toISOString().split("T")[0];
@@ -34,6 +35,7 @@ const endTime = formatTime(oneHourLater);
 
 const initialState = {
   parkings: parkings,
+  pircing: pricingDetails,
   selectedLocation: 1,
   selectedParking: null, // parking details of the location
   selectedPlan: "shortTerm",
@@ -46,8 +48,9 @@ const initialState = {
   parkingError: null,
   parkingSuccess: false,
   reservationDetails: null,
+  paymentAmount: 0,
   isSuccess: false,
-  isPayment:false
+  isPayment: false
 }
 
 const parkingSlice = createSlice({
@@ -64,59 +67,116 @@ const parkingSlice = createSlice({
       } else {
 
         if (state.selectedSlot != null) {
-           const reservD = {
-                  plan: state.selectedPlan,
-                  startDate: state.selectedStartDate,
-                  endDate: state.selectedEndDate,
-                  startTime: state.selectedStartTime,
-                  endTime: state.selectedEndTime,
-                  user: currentUser.Id,
-                  userVehicleNo: state.selectedVehicleNo
-                };
+          const reservD = {
+            plan: state.selectedPlan,
+            startDate: state.selectedStartDate,
+            endDate: state.selectedEndDate,
+            startTime: state.selectedStartTime,
+            endTime: state.selectedEndTime,
+            user: currentUser.Id,
+            userVehicleNo: state.selectedVehicleNo
+          };
           state.reservationDetails = reservD;
           state.reserved = true;
-          state.parkingError = null;      
-           state.isSuccess = true;
-                state.isPayment = true;    
+          state.parkingError = null;
+          state.isSuccess = true;
+          state.isPayment = true;
         } else {
           state.parkingError = "Select Slot";
-           state.isSuccess = false;
-                state.isPayment = false;
-        }             
+          state.isSuccess = false;
+          state.isPayment = false;
+        }
 
       }
     },
-    paymentConfirm:(state, action)=>{
+    calculatePayment: (state, action) => {
+      if (state.reservationDetails) {
+        if (state.reservationDetails.plan == "shortTerm") {
+          const plan = state.pircing.pricing.shortTerm;
+          console.log(plan);
+          if (plan) {
+            const rate = plan.ratePerHour;
+            const { hours, minutes } = getTimeDiff(state.reservationDetails.startTime, state.reservationDetails.endTime);
+            if (minutes < 15) {
+              const price = hours * rate;
+              state.paymentAmount = price;
+            } else {
+              const price = (hours + 1) * rate;
+              state.paymentAmount = price;
+            }
+          }
+        } else {
+
+          if (state.reservationDetails.plan == "longTerm") {
+            const { weeks, days } = getLongTermRange(state.reservationDetails.startDate, state.reservationDetails.endDate);
+            const plan = state.pircing.pricing.longTerm;
+            
+            if (weeks == 0) {
+              const rate = plan.ratePerDay;             
+              const price = days * rate;
+              state.paymentAmount = price;
+            } else {
+               const rate = plan.ratePerWeek;      
+               if(days > 15)      {
+                const price = (weeks +1) * rate;
+                state.paymentAmount = price;
+               }
+               else{
+                 const price = weeks * rate;
+                state.paymentAmount = price;
+               }
+
+            }
+
+          } else {
+
+            const { months, days } = getMonthlyRange(state.reservationDetails.startDate, state.reservationDetails.endDate);
+
+            const plan = state.pircing.pricing.monthly;
+            const rate = plan.ratePerMonth;
+            if (days > 10) {
+
+              const price = (months + 1) * rate;
+              state.paymentAmount = price;
+            } else {
+              const price = months * rate;
+              state.paymentAmount = price;
+            }
+          }
+        }
+      }
+    },
+    paymentConfirm: (state, action) => {
       const { paymentMade } = action.payload;
       const { currentUser } = action.payload;
 
-      if(paymentMade) {
+      if (paymentMade) {
         const location = state.parkings.find(l => l.locationId == state.selectedLocation);
-          if (location) {
-            const floor = location.floors.find(f => f.floorId == state.selectedSlot.floorId);
-            if (floor) {
-              const slot = floor.slots.find(s => s.id == state.selectedSlot.slotId);
-              if (slot) {
-                slot.reserved = true;
-                const reservD = {
-                  plan: state.selectedPlan,
-                  startDate: state.selectedStartDate,
-                  endDate: state.selectedEndDate,
-                  startTime: state.selectedStartTime,
-                  endTime: state.selectedEndTime,
-                  user: currentUser.Id,
-                  userVehicleNo: state.selectedVehicleNo
-                };
+        if (location) {
+          const floor = location.floors.find(f => f.floorId == state.selectedSlot.floorId);
+          if (floor) {
+            const slot = floor.slots.find(s => s.id == state.selectedSlot.slotId);
+            if (slot) {
+              slot.reserved = true;
+              const reservD = {
+                plan: state.selectedPlan,
+                startDate: state.selectedStartDate,
+                endDate: state.selectedEndDate,
+                startTime: state.selectedStartTime,
+                endTime: state.selectedEndTime,
+                user: currentUser.Id,
+                userVehicleNo: state.selectedVehicleNo
+              };
 
-                slot.reservedDetail.push(reservD);
-                state.selectedParking = state.parkings.find(x => x.locationId == location);
-                state.selectedSlot = null;
-                state.parkingError = null;
-                state.isSuccess = true;
-                state.isPayment = true;
-              }
+              slot.reservedDetail.push(reservD);
+              state.selectedParking = state.parkings.find(x => x.locationId == location);
+              state.selectedSlot = null;
+              state.parkingError = null;
+              state.isSuccess = true;
+              state.isPayment = true;
             }
           }
+        }
 
       }
 
@@ -228,8 +288,8 @@ const parkingSlice = createSlice({
     },
     reset: (state, action) => {
       const { currentUser } = action.payload;
-      if(currentUser){
-      state.selectedVehicleNo = currentUser?.vehicles?.[0]?.no || "";
+      if (currentUser) {
+        state.selectedVehicleNo = currentUser?.vehicles?.[0]?.no || "";
       }
       state.selectedLocation = parkings?.[0]?.locationId || "";
       state.selectedStartDate = startDate;
@@ -242,7 +302,8 @@ const parkingSlice = createSlice({
       state.reservationDetails = null;
       state.isSuccess = false;
       state.isPayment = false;
-      console.log(state.parkings);
+      state.paymentAmount = 0,
+        console.log(state.parkings);
     }
 
   },
@@ -250,10 +311,82 @@ const parkingSlice = createSlice({
 
 export const { reserveSlot, removeReservation, setSelectedLocation, setSelectedParking, setIntialValues, setSelectedVehicleNo,
   setSelectedPlan, setSelectedStartDate, setSelectedEndDate, setSelectedStartTime, setSelectedEndTime, setError, setSelectedSlot,
-  reset,paymentConfirm
+  reset, paymentConfirm, calculatePayment
 
 } = parkingSlice.actions;
 
 
 
 export default parkingSlice.reducer;
+function getTimeDiff(startTime, endTime) {
+  const parseTime = (t) => {
+    const [h, m] = t.split(":").map(Number);
+    return h * 60 + m; // total minutes
+  };
+
+  const startMinutes = parseTime(startTime);
+  const endMinutes = parseTime(endTime);
+
+  const diffMinutes = endMinutes - startMinutes;
+
+  const hours = Math.floor(diffMinutes / 60);
+  const minutes = diffMinutes % 60;
+
+  return { hours, minutes };
+}
+
+// Monthly plan: months + days
+function getMonthlyRange(startDate, endDate) {
+  let start = normalizeDate(startDate);
+  let end = normalizeDate(endDate);
+
+  if (end < start) throw new Error("End date must be after start date");
+
+  let months = 0, days = 0;
+
+  // Count months
+  while (
+    start.getFullYear() < end.getFullYear() ||
+    (start.getFullYear() === end.getFullYear() && start.getMonth() < end.getMonth())
+  ) {
+    start.setMonth(start.getMonth() + 1);
+    if (start <= end) {
+      months++;
+    } else {
+      start.setMonth(start.getMonth() - 1);
+      break;
+    }
+  }
+  return { months, days };
+}
+
+// Utility: normalize dates
+function normalizeDate(dateStr) {
+  const d = new Date(dateStr);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+// Long-term plan: weeks + days only
+function getLongTermRange(startDate, endDate) {
+  let start = normalizeDate(startDate);
+  let end = normalizeDate(endDate);
+
+  if (end < start) throw new Error("End date must be after start date");
+
+  let weeks = 0, days = 0;
+
+  // Count weeks
+  while (start.getTime() + 7 * 24 * 60 * 60 * 1000 <= end.getTime()) {
+    start.setDate(start.getDate() + 7);
+    weeks++;
+  }
+
+  // Remaining days
+  while (start < end) {
+    start.setDate(start.getDate() + 1);
+    days++;
+  }
+
+  return { weeks, days };
+}

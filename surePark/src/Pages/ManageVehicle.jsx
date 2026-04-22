@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { addUserVehicles, deleteUserVehicles, editUserVehicles } from '../feature/userSlice';
 import { Formik, Form, Field, ErrorMessage } from "formik";
+import car from '../assets/car.jpg'
 import * as Yup from "yup";
 
 const ManageVehicle = () => {
@@ -55,98 +56,108 @@ const ManageVehicle = () => {
 
 
   return (
-    <>
-       <div className="min-h-screen bg-orange-100 flex flex-col items-center px-4 py-10 ">
-      {/* Heading */}
-      <div className="text-start max-w-3xl mx-auto p-10">
-        <h2 className="text-2xl md:text-4xl font-bold bg-gradient-to-r p-2 from-teal-500 via-orange-500 to-pink-500 bg-clip-text text-transparent">
-          Manage Vehicles
-        </h2>
-      </div>
 
-      <div className="bg-white shadow-xl rounded-2xl p-6 ">  
+    <div className="min-h-screen flex">
+     
 
-        <Formik
-          initialValues={{ no: "" }}
-          validationSchema={validationSchema}
-          onSubmit={handleAdd}
-        >
-          {({ setFieldValue }) => (
-            <Form className="space-y-5">
-              <div>
-                <Field
-                  type="text"
-                  name="no"
-                  placeholder="Enter No:(eg:TN/07/AB/1234)"
-                  className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                />
-                <ErrorMessage name="no" component="div" className="text-red-500 text-sm mt-1" />
-              </div>
+      {/* Right side - login form */}
+      <div className="flex  flex-col w-full md:w-1/2 items-center justify-center bg-gray-100">
+        {/* Heading */}
+        <div className="text-start max-w-3xl mx-auto p-10">
+          <h2 className="text-2xl md:text-4xl font-bold bg-gradient-to-r p-2 from-teal-500 via-orange-500 to-pink-500 bg-clip-text text-transparent">
+            Manage Vehicles
+          </h2>
+        </div>
 
-              {error && <div className="text-red-500 text-sm">{error}</div>}
+        <div className="bg-white shadow-xl rounded-2xl p-6 ">
 
-              <button
-                type="submit"
-                className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-orange-500 transition"
-              >
-                {editIndex !== null ? "Update" : "Add"}
-              </button>
+          <Formik
+            initialValues={{ no: "" }}
+            validationSchema={validationSchema}
+            onSubmit={handleAdd}
+          >
+            {({ setFieldValue }) => (
+              <Form className="space-y-5">
+                <div>
+                  <Field
+                    type="text"
+                    name="no"
+                    placeholder="Enter No:(eg:TN/07/AB/1234)"
+                    className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                  <ErrorMessage name="no" component="div" className="text-red-500 text-sm mt-1" />
+                </div>
+
+                {error && <div className="text-red-500 text-sm">{error}</div>}
+
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-orange-500 transition"
+                >
+                  {editIndex !== null ? "Update" : "Add"}
+                </button>
 
 
-              {/* Table */}
-              <div className="w-full max-w-2xl mt-6">
-                <table className="w-full border-collapse shadow-lg bg-white rounded-lg overflow-hidden">
-                  <thead className="bg-orange-200">
-                    <tr>
-                      <th className="p-3 text-left">#</th>
-                      <th className="p-3 text-left">Vehicle Number</th>
-                      <th className="p-3 text-left">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {vehicles.map((v, i) => (
-                      <tr key={i} className="border-b hover:bg-orange-50">
-                        <td className="p-3">{i + 1}</td>
-                        <td className="p-3">{v.no}</td>
-                        <td className="p-3 flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => handleEdit(i, setFieldValue)}
-                            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDelete(i)}
-                            className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                    {vehicles.length === 0 && (
+                {/* Table */}
+                <div className="w-full max-w-2xl mt-6">
+                  <table className="w-full border-collapse shadow-lg bg-white rounded-lg overflow-hidden">
+                    <thead className="bg-orange-200">
                       <tr>
-                        <td colSpan="3" className="p-3 text-center text-gray-500">
-                          No vehicles added yet
-                        </td>
+                        <th className="p-3 text-left">#</th>
+                        <th className="p-3 text-left">Vehicle Number</th>
+                        <th className="p-3 text-left">Actions</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </Form>
-          )}
-        </Formik>
+                    </thead>
+                    <tbody>
+                      {vehicles.map((v, i) => (
+                        <tr key={i} className="border-b hover:bg-orange-50">
+                          <td className="p-3">{i + 1}</td>
+                          <td className="p-3">{v.no}</td>
+                          <td className="p-3 flex gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleEdit(i, setFieldValue)}
+                              className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(i)}
+                              className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                      {vehicles.length === 0 && (
+                        <tr>
+                          <td colSpan="3" className="p-3 text-center text-gray-500">
+                            No vehicles added yet
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </Form>
+            )}
+          </Formik>
 
         </div>
 
 
-
-
       </div>
-    </>
+
+       {/* Left side - promo */}
+      <div
+        className="hidden md:flex w-1/2 bg-cover bg-center text-white relative"
+        style={{ backgroundImage: `url(${car})` }}
+      >
+       
+      </div>
+    </div>
   )
 }
 

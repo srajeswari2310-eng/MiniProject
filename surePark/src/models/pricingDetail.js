@@ -20,7 +20,7 @@ const pricingDetails = {
       ]
     },
     monthly: {
-      ratePerMonth: 3000, // INR
+      ratePerMonth: 6000, // INR
       discountPercent: 10,
       benefits: [
         "Guaranteed reserved slot",
@@ -31,3 +31,5 @@ const pricingDetails = {
     }
   }
 };
+
+export default pricingDetails;

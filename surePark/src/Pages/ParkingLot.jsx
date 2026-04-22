@@ -3,14 +3,18 @@ import ParkingLotHeader from '../Components/ParkingLotHeader'
 import ParkingLotList from '../Components/ParkingLotList'
 import SlotSearchHeader from '../Components/SlotSearchHeader'
 import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { calculatePayment } from '../feature/parkingSlice'
 
 const ParkingLot = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { reservationDetails } = useSelector((state) => state.parking);
 
   const handelPayment = () => {
     console.log(reservationDetails);
+
+    dispatch(calculatePayment());
 
       navigate("/home/payment");
     

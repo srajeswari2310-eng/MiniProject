@@ -34,7 +34,7 @@ const users=[
             {
                 locationId: 2,
                 floorId: 2,
-                slotId: 1               
+                slotId: 1             
 
             }
 
@@ -78,7 +78,7 @@ const users=[
         Id:4,
         name: "admin",
         email:"admin@example.com",
-        password: "admin123",
+        password: "admin@123",
         isLoggedIn: false,
         role:"admin",
         vehicles:null,

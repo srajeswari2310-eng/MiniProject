@@ -70,8 +70,14 @@ const NavBar = ({ onScrollToAbout, onScrollToHow, onScrollToPrice }) => {
 
     ...(isMenuOpen && currentUser.role == "user"  ?
        [{ name: 'Profile', to: 'profile', type: 'link' },
-        { name: 'Vehicles', to: 'vehicles', type: 'link' },]
-       :[])
+        { name: 'Vehicles', to: 'vehicles', type: 'link' },
+      { name: "Logout", action: handleLogout, type: "button" },]
+       :[]),
+
+       ...(isMenuOpen && currentUser.role == "admin"  ?
+       [{ name: "Logout", action: handleLogout, type: "button" },]
+       :[]),
+
   ];
 
   return (

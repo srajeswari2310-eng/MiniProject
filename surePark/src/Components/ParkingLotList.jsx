@@ -46,19 +46,14 @@ const ParkingLotList = () => {
 
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen w-full">
-
-    
-
-      {/* Right side map */}
-      <div className="md:w-1/2  flex  flex-col w-full items-center">
-
+    <div className="flex flex-col lg:flex-row min-h-screen w-full gap-6 p-4">
+      
+      {/* Slot list section */}
+      <div className="flex flex-col w-full lg:w-1/2 items-center">
         <h1 className="text-2xl font-bold mb-6">{selectedParking.location} Slots</h1>
 
-
         {/* Tabs */}
-
-        <div className="flex gap-4 mb-6">
+        <div className="flex flex-wrap gap-4 mb-6">
           {selectedParking.floors.map((floor, index) => (
             <button
               key={floor.floorId}
@@ -67,7 +62,9 @@ const ParkingLotList = () => {
                 setActiveFloor(index);
               }}
               className={`px-4 py-2 rounded-lg font-semibold transition 
-        ${activeTab === "floor" && activeFloor === index ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"}`}
+                ${activeTab === "floor" && activeFloor === index 
+                  ? "bg-blue-600 text-white" 
+                  : "bg-gray-200 text-gray-700"}`}
             >
               {floor.name}
             </button>
@@ -76,13 +73,14 @@ const ParkingLotList = () => {
             <button
               onClick={() => setActiveTab("favorites")}
               className={`px-4 py-2 rounded-lg font-semibold transition 
-        ${activeTab === "favorites" ? "bg-purple-600 text-white" : "bg-gray-200 text-gray-700"}`}
+                ${activeTab === "favorites" 
+                  ? "bg-purple-600 text-white" 
+                  : "bg-gray-200 text-gray-700"}`}
             >
               Favorites
             </button>
           )}
         </div>
-
 
         {/* Slot Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
@@ -103,23 +101,15 @@ const ParkingLotList = () => {
 
           {activeTab === "favorites" &&
             currentUser.favoriteSlot.map((fav, index) => {
-              // // Find the correct location
-              // const mall = parkings.find((p) => p.locationId === fav.locationId);
-              // if (!mall) return null;
-
-              if (fav.locationId != selectedParking.locationId) return null;
-              // Find the floor
-
+              if (fav.locationId !== selectedParking.locationId) return null;
               const floor = selectedParking.floors.find((f) => f.floorId === fav.floorId);
               if (!floor) return null;
-
-              // Find the slot
               const slot = floor.slots.find((s) => s.id === fav.slotId);
               if (!slot) return null;
 
               return (
                 <ParkingLotCard
-                  key={`${fav.location}-${fav.floorId}-${fav.slotsId}-${index}`}
+                  key={`${fav.location}-${fav.floorId}-${fav.slotId}-${index}`}
                   floorId={floor.floorId}
                   slotDetails={slot}
                   currentUser={currentUser}
@@ -135,17 +125,12 @@ const ParkingLotList = () => {
         </div>
       </div>
 
-      
-        {/* Left side content */}
-      {
-       selectedParking?.coordinates && (
-        <div className="w-full md:w-1/2 h-[120px] sm:h-[200px] md:h-[300px] lg:h-full">
-       <MapComponent coordinates={selectedParking.coordinates}/>
-      </div>)
-    }
-
-    
-
+      {/* Map section */}
+      {selectedParking?.coordinates && (
+        <div className="w-full lg:w-1/2 h-64 sm:h-80 lg:h-auto">
+          <MapComponent coordinates={selectedParking.coordinates} />
+        </div>
+      )}
     </div>
   );
 

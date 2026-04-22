@@ -9,25 +9,24 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import parking from '../models/parking';
 import Pricing from '../Components/Pricing';
+import UserReservationDetails from '../Components/UserReservationDetails';
 
 const Home = () => {
-  // const parkingData = parking;
-
-  // useEffect(()=>{
-  //   console.log(parkingData)
-
-  // },[])
   
 
   const { aboutRef } =  useOutletContext(); // get ref from parent
   const { howRef } =  useOutletContext(); 
   const { priceRef } =  useOutletContext(); 
+  const { role } = useOutletContext();
   return (
   <>
   <Hero/>
+   
+   {role == "user" && <UserReservationDetails/>}
   <section ref={aboutRef}>
   <About/>
   </section>
+ 
   <ParkingTypes/>
   <section ref={howRef}>
   <HowItWorks/>
